@@ -1,33 +1,37 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
-using Domain;
-using SQLitePCL;
 
 namespace API.Controllers
 {
+
+    using System.Diagnostics;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Persistence;
+    using Domain;
+    using SQLitePCL;
+    using MediatR;
+    using Application.Activities;
     public class ActivitiesController : BaseApiController
     {
-        private readonly DataContext _context;
-        
-        public ActivitiesController(DataContext context)
+        private readonly IMediator _mediator;
+
+        public Activities Controller(IMediator mediator)
         {
-           _context = context;
-            
+            _mediator = mediator;
+
         }
+        
 
         [HttpGet] //api/activities
         public async Task<ActionResult<List<Domain.Activity>>> GetActivities()
         {
-            return await _context.Activities.ToListAsync();
+            return await _mediator.Send(new List.Query());
         }
         
         [HttpGet("{id}")]
 
         public async Task<ActionResult<Domain.Activity>> GetActivities(Guid id)
         {
-            return await _context.Activities.FindAsync(id);
+            return Ok();
         }
     }
 }
